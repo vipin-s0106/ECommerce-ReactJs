@@ -7,8 +7,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Order from './components/Order';
 import Profile from './components/Profile';
-
-
+import PrivateRoute from './components/PrivateRoute';
 import {
   BrowserRouter as Router,
   Switch,
@@ -16,6 +15,9 @@ import {
   Redirect,
 } from "react-router-dom";
 import Error404 from './components/Error404';
+
+//following importing for http interceptor
+import './interceptor'
 
 function App() {
 
@@ -34,15 +36,15 @@ function App() {
       <Router>
           {/* NavBar */}
           <Header loggedOut={loggedOut} setloggedOutFunc={setLoggedOut1} />
-
+          <br />
           {/* router */}
           <Switch>
             <Route path="/login">
                 <Login setloggedInFunc={setloggedIn} />
             </Route>
             <Route path="/signup" component={Register} />
-            <Route path="/orders" component={Order} />
-            <Route path="/profile" component={Profile} />
+            <PrivateRoute path="/orders" component={Order} />
+            <PrivateRoute path="/profile" component={Profile} />
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/" exact component={Dashboard} />
             <Route path="*" component={Error404} />

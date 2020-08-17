@@ -3,15 +3,13 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import axios from 'axios';
 
 import { useHistory } from 'react-router-dom';
 
@@ -62,31 +60,29 @@ export default function Login(props) {
       email:email,
       password:password
     }
-
-    fetch('http://localhost:3200/user/login',
-    {
-      method:'POST',
-      headers:{
-        'Content-Type': 'application/json'
-      },
-      body:JSON.stringify(cred)
-    })
-    .then(response =>{
-      if (response.status != 200){
-        console.log(response)
-        // throw new Error(response.statusText)
-        throw new Error("Invalid Credentials")
-      }
-      return response.json()
-    })
-    .then(result =>{
-      localStorage.setItem('access',result.access)
-      props.setloggedInFunc()
-      history.push('/dashboard')
-    })
-    .catch(err =>{
-      alert(err)
-    })
+    if (email && password){
+      // fetch('http://localhost:3200/user/login',
+      // {
+      //   method:'POST',
+      //   headers:{
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body:JSON.stringify(cred)
+      // })
+      axios.post('http://localhost:3200/user/login',cred)
+      .then(response =>{
+        localStorage.setItem('access',response.data.access)
+        props.setloggedInFunc()
+        history.push('/dashboard')
+      })
+      .catch(err =>{
+        console.log(err)
+        alert('Invalid Credentials')
+      })
+    }else{
+      alert('Please enter the Username/Password')
+    }
+    
   }
 
   return (
@@ -106,7 +102,7 @@ export default function Login(props) {
             required
             fullWidth
             id="user"
-            label="email"
+            label="Email"
             name="email"
             autoComplete="email"
             autoFocus

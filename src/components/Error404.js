@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
+import errorImg from '../assests/error404.png'
 
 export class Error404 extends Component {
     render() {
         return (
             <div>
-                Error 404
+                <img src={errorImg} />
             </div>
         )
     }

@@ -17,9 +17,9 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import {
   BrowserRouter as Router,
-  Link,
-  Redirect
+  Link
 } from "react-router-dom";
+
 
 import { useHistory } from 'react-router-dom';
 
