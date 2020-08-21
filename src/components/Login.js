@@ -61,17 +61,10 @@ export default function Login(props) {
       password:password
     }
     if (email && password){
-      // fetch('http://localhost:3200/user/login',
-      // {
-      //   method:'POST',
-      //   headers:{
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body:JSON.stringify(cred)
-      // })
       axios.post('http://localhost:3200/user/login',cred)
       .then(response =>{
         localStorage.setItem('access',response.data.access)
+        localStorage.setItem('refresh',response.data.refresh)
         props.setloggedInFunc()
         history.push('/dashboard')
       })

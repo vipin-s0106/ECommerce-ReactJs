@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export class Order extends Component {
 
     constructor(props){
-        super(props)
+        super(props) 
         
         this.state = {
             orders:[]
@@ -17,7 +20,12 @@ export class Order extends Component {
             console.log(response)
         })
         .catch(err => {
-            console.log(err)
+            if(err.response.status === 401){
+                this.props.history.push('/login')
+            }
+            else{
+                return toast.error("some error occured")
+            }
         })
     }
 
@@ -25,7 +33,8 @@ export class Order extends Component {
     render() {
         return (
             <div>
-                Orders List
+                Order List
+                <ToastContainer />
             </div>
         )
     }

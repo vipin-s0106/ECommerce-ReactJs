@@ -1,6 +1,5 @@
 import axios , {AxisResponse} from 'axios';
 
-
 // declare a request interceptor
 axios.interceptors.request.use(config => {
     // perform a task before the request is sent  
@@ -13,33 +12,43 @@ axios.interceptors.request.use(config => {
   });
 
 
-// axios.interceptors.response.use((response) => {
-//     return response
-//  },
-//  error => {
-//     const originalRequest = error.config;
-//     console.log(originalRequest._retry)
-//     if (error.response.status === 401 && !originalRequest._retry) {
- 
-//         originalRequest._retry = true;
-//         return axios.post('/auth/token',
-//             {
-//                 "refresh_token": localStorage.getItem('refresh')
-//             })
-//             .then(res => {
-//                 if (res.status === 201) {
-//                     // 1) put token to LocalStorage
-//                     localStorage.setItem('access',res.data.access)
- 
-//                     // 2) Change Authorization header
-//                     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access');
- 
-//                     // 3) return originalRequest object with Axios.
-//                     return axios(originalRequest);
-//                 }
-//             })
-//     }
- 
-//     // return Error object with Promise
-//     return Promise.reject(error);
-//  });
+axios.interceptors.response.use(response => {
+    return response;
+}, err => {
+    return new Promise((resolve, reject) => {
+        const originalReq = err.config;
+        if ( err.response.status === 401 && err.config && !err.config.__isRetryRequest)
+        {
+            originalReq._retry = true;
+
+            let res = fetch('http://localhost:3200/user/refresh/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    refresh: localStorage.getItem("refresh")
+                }),
+            }).then(res => {
+                if (res.status != 201){
+                    localStorage.clear()
+                    window.location.reload(false);
+                    return Promise.reject(err);
+                }
+                return res.json()
+            })
+            .then(res => {
+                // console.log(res);
+                localStorage.setItem('access',res.access)
+                return axios(originalReq);
+            })
+            .catch(err => {
+                return Promise.reject(err);
+            });
+            resolve(res);
+        }
+
+
+        return Promise.reject(err);
+    });
+});
